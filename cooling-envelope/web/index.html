@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>冷静期信封</title>
+
+<!-- 字体全部内置在本地 web/fonts/,离线可用,不依赖任何 CDN -->
+<link rel="stylesheet" href="fonts/fonts.css" />
+<style>
+:root{
+  /* —— 与主页同一套 Cream Workshop 配色,所以它天生是家族的一员 —— */
+  --cream:      #F4ECD8;
+  --cream-card: #FAF4E4;
+  --ink:        #1F1B16;
+  --ink-soft:   #756A59;
+  --clay:       #C25E37;
+  --clay-deep:  #9C4326;
+  --clay-bright:#DA7A52;
+  --line:       #E4D9BF;
+
+  --serif: "Fraunces", "LXGW WenKai", Georgia, serif;
+  --hand:  "LXGW WenKai", "Source Han Serif SC", "Songti SC", serif;
+  --mono:  "IBM Plex Mono", ui-monospace, monospace;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--hand);
+  color:var(--ink);
+  background:
+    radial-gradient(120% 90% at 50% -10%, #FBF5E6 0%, var(--cream) 55%, #EFE6CF 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.wrap{ position:relative; z-index:1; max-width:600px; margin:0 auto; padding:48px 22px 80px; }
+
+header{ text-align:center; margin-bottom:36px; }
+.kicker{ font-family:var(--mono); font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--clay); margin-bottom:14px; }
+h1{ font-family:var(--serif); font-weight:400; font-size:clamp(34px,7vw,46px); margin:0;
+  letter-spacing:.01em; }
+.lede{ font-family:var(--hand); color:var(--ink-soft); font-size:16px; margin:14px auto 0;
+  max-width:34ch; line-height:1.7; }
+
+.desk{
+  background:var(--cream-card); border:1px solid var(--line); border-radius:4px;
+  padding:26px 24px 22px;
+  box-shadow:0 1px 0 #fff inset, 0 18px 38px -28px rgba(31,27,22,.5);
+  position:relative;
+}
+.desk::after{
+  content:""; position:absolute; top:0; right:0; border-width:0 22px 22px 0;
+  border-style:solid; border-color:transparent var(--cream) transparent transparent;
+  filter:drop-shadow(-2px 2px 1px rgba(31,27,22,.08));
+}
+.field-label{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-soft); display:block; margin:0 0 8px; }
+textarea, input[type=text], input[type=number]{
+  width:100%; background:transparent; border:none; color:var(--ink);
+  font-family:var(--hand); font-size:18px; line-height:1.65; resize:none;
+  border-bottom:1.5px solid var(--line); padding:2px 0 8px; outline:none; transition:border-color .25s;
+}
+textarea::placeholder, input::placeholder{ color:#BCB29A; }
+textarea:focus, input:focus{ border-color:var(--clay); }
+textarea{ min-height:62px; }
+
+.row2{ display:grid; grid-template-columns:1fr 1.6fr; gap:18px; margin-top:20px; }
+.row2 .field-label{ margin-bottom:6px; }
+input[type=text]{ font-size:16px; }
+
+.durs{ margin-top:24px; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; align-items:center; }
+.chip{
+  font-family:var(--hand); font-size:14px; color:var(--ink-soft);
+  background:transparent; border:1.4px solid var(--line); border-radius:999px;
+  padding:7px 15px; cursor:pointer; transition:.18s; line-height:1;
+}
+.chip:hover{ border-color:var(--clay); color:var(--ink); }
+.chip[aria-pressed=true]{ background:var(--clay); border-color:var(--clay); color:#FBF5E6; }
+.chip.test{ font-family:var(--mono); font-size:11px; letter-spacing:.04em; border-style:dashed; }
+.custom-h{ width:54px !important; border-bottom-width:1.4px; font-size:14px !important;
+  text-align:center; padding:5px 0 !important; }
+.custom-wrap{ display:inline-flex; align-items:baseline; gap:6px; color:var(--ink-soft);
+  font-family:var(--hand); font-size:14px; }
+
+.seal-btn{
+  margin-top:26px; width:100%; font-family:var(--serif); font-size:17px; letter-spacing:.04em;
+  color:#FBF5E6; background:var(--clay); border:none; border-radius:3px; padding:14px;
+  cursor:pointer; transition:.2s; box-shadow:0 10px 22px -14px var(--clay-deep);
+}
+.seal-btn:hover{ background:var(--clay-deep); transform:translateY(-1px); }
+
+.shelf-head{ display:flex; align-items:baseline; justify-content:space-between; margin:50px 2px 18px; }
+.shelf-head h2{ font-family:var(--serif); font-weight:400; font-size:22px; margin:0; }
+.shelf-head .count{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); letter-spacing:.1em; }
+
+.empty{ text-align:center; color:var(--ink-soft); font-size:15px; padding:34px 10px; line-height:1.8; }
+
+.shelf{ display:flex; flex-direction:column; gap:16px; }
+
+.env{
+  position:relative; background:var(--cream-card); border:1px solid var(--line);
+  border-radius:5px; padding:22px 22px 20px; overflow:hidden;
+  box-shadow:0 14px 30px -26px rgba(31,27,22,.55);
+  animation:drop .5s cubic-bezier(.2,.9,.25,1) both;
+}
+@keyframes drop{ from{ opacity:0; transform:translateY(-10px) scale(.985); } }
+
+.env .flap{
+  position:absolute; top:0; left:0; right:0; height:0;
+  border-left:300px solid transparent; border-right:300px solid transparent;
+  border-top:46px solid #F0E7CE;
+  transform-origin:top; transform:scaleY(1); opacity:0; pointer-events:none;
+}
+.env.locked .flap, .env.ready .flap{ opacity:1; }
+.env.opened .flap{ animation:liftflap .7s ease both; }
+@keyframes liftflap{ to{ transform:rotateX(-168deg); opacity:0; } }
+
+.seal{ position:absolute; top:24px; left:50%; transform:translateX(-50%);
+  width:60px; height:60px; z-index:3; cursor:default; }
+.env.ready .seal{ cursor:pointer; }
+.seal-half{
+  position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 36% 30%, var(--clay-bright), var(--clay) 46%, var(--clay-deep) 100%);
+  box-shadow:0 4px 10px -4px var(--clay-deep), 0 1px 0 rgba(255,255,255,.25) inset;
+}
+.seal-half.l{ clip-path:inset(0 50% 0 0); }
+.seal-half.r{ clip-path:inset(0 0 0 50%); }
+.seal-mark{ position:absolute; inset:0; display:grid; place-items:center; z-index:2;
+  filter:drop-shadow(0 1px 0 var(--clay-bright)); }
+.seal-mark svg{ width:26px; height:26px; opacity:.85; }
+.env.ready .seal{ animation:breathe 2.6s ease-in-out infinite; }
+@keyframes breathe{ 0%,100%{ transform:translateX(-50%) scale(1); } 50%{ transform:translateX(-50%) scale(1.045); } }
+.env.ready .seal-half{ box-shadow:0 5px 16px -5px var(--clay-deep), 0 0 0 4px rgba(218,122,82,.16); }
+
+.env.cracking .seal-half.l{ animation:crackL .65s ease-in forwards; }
+.env.cracking .seal-half.r{ animation:crackR .65s ease-in forwards; }
+.env.cracking .seal-mark{ animation:fadeout .3s ease forwards; }
+@keyframes crackL{ to{ transform:translate(-26px,12px) rotate(-26deg); opacity:0; } }
+@keyframes crackR{ to{ transform:translate(26px,12px) rotate(26deg); opacity:0; } }
+@keyframes fadeout{ to{ opacity:0; transform:scale(.6); } }
+
+.env .veil{ text-align:center; padding-top:30px; }
+.env .veil .hint{ font-family:var(--hand); color:var(--ink-soft); font-size:15px; }
+.env .countdown{ font-family:var(--mono); font-size:12.5px; letter-spacing:.08em;
+  color:var(--clay-deep); margin-top:8px; }
+.env.ready .veil .hint{ color:var(--ink); }
+.env.ready .countdown{ color:var(--clay); }
+
+.letter{ display:none; padding-top:6px; }
+.env.opened .letter{ display:block; animation:rise .6s .35s ease both; }
+@keyframes rise{ from{ opacity:0; transform:translateY(12px); } }
+.letter .stamp-date{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; color:var(--ink-soft); }
+.letter .q{ font-family:var(--serif); font-size:20px; line-height:1.5; margin:4px 0 0; }
+.past{ margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); }
+.past .tag{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-soft); }
+.past .body{ font-family:var(--hand); font-size:15.5px; color:var(--ink); margin-top:5px; line-height:1.7; }
+.past .body .lean{ color:var(--clay-deep); }
+
+.verdict-ask{ margin-top:18px; }
+.verdict-ask .prompt{ font-family:var(--serif); font-style:italic; font-size:16px; color:var(--ink); margin-bottom:10px; }
+.verdict-ask textarea{ font-size:16px; }
+.verdict-ask .save{ margin-top:12px; font-family:var(--hand); font-size:14px; color:#FBF5E6;
+  background:var(--ink); border:none; border-radius:3px; padding:9px 18px; cursor:pointer; transition:.18s; }
+.verdict-ask .save:hover{ background:#000; }
+
+.verdict-done{ margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); }
+.verdict-done .tag{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--clay); }
+.verdict-done .body{ font-family:var(--hand); font-size:16px; line-height:1.7; margin-top:5px; }
+.verdict-done .vstamp{ font-family:var(--mono); font-size:10.5px; color:var(--ink-soft); margin-top:8px; }
+
+.env.opened .seal{ pointer-events:none; }
+
+footer{ margin-top:40px; text-align:center; }
+.footnote{ font-family:var(--hand); font-size:12.5px; color:#A99E86; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">a quiet tool · 01</div>
+    <h1>冷静期信封</h1>
+    <p class="lede">把此刻的决定先封起来,交给明天那个情绪已经退潮的你来拍板。</p>
+  </header>
+
+  <section class="desk">
+    <label class="field-label" for="q">你正在纠结什么</label>
+    <textarea id="q" placeholder="要不要发那封邮件 / 要不要买它 / 要不要回那条消息……"></textarea>
+
+    <div class="row2">
+      <div>
+        <label class="field-label" for="lean">此刻直觉</label>
+        <input type="text" id="lean" placeholder="想 / 不想 / 说不清" />
+      </div>
+      <div>
+        <label class="field-label" for="why">因为</label>
+        <input type="text" id="why" placeholder="一句话写下此刻的理由(可留空)" />
+      </div>
+    </div>
+
+    <div class="durs">
+      <span class="field-label">封多久</span>
+      <div class="chips" id="chips">
+        <button class="chip" data-dur="sleep" aria-pressed="true">睡一觉再说</button>
+        <button class="chip" data-dur="24">24 小时</button>
+        <button class="chip" data-dur="72">3 天</button>
+        <span class="custom-wrap">
+          <button class="chip" data-dur="custom">自定义</button>
+          <input type="number" class="custom-h" id="customH" min="1" max="720" placeholder="6" /> 小时
+        </span>
+        <button class="chip test" data-dur="test">测试·1 分钟</button>
+      </div>
+    </div>
+
+    <button class="seal-btn" id="sealBtn">封 缄</button>
+  </section>
+
+  <div class="shelf-head">
+    <h2>信匣</h2>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="shelf" id="shelf"></div>
+  <p class="empty" id="empty">信匣还是空的。<br/>写下第一个决定,把它封起来。</p>
+
+  <footer>
+    <p class="footnote">封存的内容会加密存在本地,开启时间之前不会被打开。</p>
+  </footer>
+
+</div>
+
+<script>
+/* ───────── 与 Python 内核的桥 ─────────
+   前端不碰存储,一切通过 window.pywebview.api 走后端。
+   锁着的信封,后端根本不会把内容发过来 —— 所以偷看不了。 */
+function pywebviewReady(){
+  return new Promise(res => {
+    if (window.pywebview && window.pywebview.api) return res();
+    window.addEventListener("pywebviewready", () => res(), { once:true });
+  });
+}
+
+let envelopes = [];
+const byId = id => envelopes.find(e => e.id === id);
+
+/* 不强制时,若用户正在写裁决,跳过自动刷新,避免清空输入 */
+async function refresh(force){
+  const ae = document.activeElement;
+  if (!force && ae && ae.classList && ae.classList.contains("vfield")) return;
+  try { envelopes = await window.pywebview.api.list(); } catch(e){ /* ignore */ }
+  render();
+}
+window.refresh = () => refresh(false);   // 供后台调度器轻推
+
+/* —— 时长选择 —— */
+let chosenDur = "sleep";
+const chips = document.getElementById("chips");
+chips.addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if(!b) return;
+  chosenDur = b.dataset.dur;
+  chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+  if (chosenDur === "custom") document.getElementById("customH").focus();
+});
+
+function computeOpenAt(){
+  const t = Date.now();
+  if (chosenDur === "test") return t + 60 * 1000;
+  if (chosenDur === "sleep"){
+    const m = new Date(t); m.setHours(8,0,0,0);
+    if (new Date(t).getHours() >= 8) m.setDate(m.getDate() + 1);
+    return m.getTime();
+  }
+  if (chosenDur === "custom"){
+    const h = Math.max(1, parseInt(document.getElementById("customH").value || "6", 10));
+    return t + h * 3600e3;
+  }
+  return t + parseInt(chosenDur, 10) * 3600e3;
+}
+
+/* —— 封缄 —— */
+document.getElementById("sealBtn").addEventListener("click", async () => {
+  const q = document.getElementById("q").value.trim();
+  if (!q){ document.getElementById("q").focus(); return; }
+  await window.pywebview.api.seal(
+    q,
+    document.getElementById("lean").value.trim(),
+    document.getElementById("why").value.trim(),
+    computeOpenAt()
+  );
+  document.getElementById("q").value = "";
+  document.getElementById("lean").value = "";
+  document.getElementById("why").value = "";
+  refresh(true);
+});
+
+/* —— 文案 —— */
+function countdownText(ms){
+  if (ms <= 0) return "可以开启了";
+  const m = Math.floor(ms / 60000);
+  const d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60;
+  if (d > 0) return `还有 ${d} 天 ${h} 小时开启`;
+  if (h > 0) return `还有 ${h} 小时 ${mm} 分开启`;
+  return `还有 ${Math.max(1, mm)} 分钟开启`;
+}
+function fmtDate(t){
+  const d = new Date(t), p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function esc(s){ return (s || "").replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+const MOON = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" fill="#000" fill-opacity=".28"/></svg>';
+
+/* —— 渲染信匣 —— */
+const shelf = document.getElementById("shelf");
+const empty = document.getElementById("empty");
+const count = document.getElementById("count");
+
+function render(){
+  shelf.innerHTML = "";
+  empty.style.display = envelopes.length ? "none" : "block";
+  count.textContent = envelopes.length ? `${envelopes.length} 封` : "";
+
+  envelopes.forEach(env => {
+    const ready = env.ready;
+    const opened = env.opened;
+
+    const el = document.createElement("div");
+    el.className = "env " + (opened ? "opened" : ready ? "ready" : "locked");
+    el.dataset.id = env.id;
+
+    el.innerHTML = `
+      <div class="flap"></div>
+      ${opened ? "" : `
+        <div class="seal">
+          <div class="seal-half l"></div>
+          <div class="seal-half r"></div>
+          <div class="seal-mark">${MOON}</div>
+        </div>`}
+      ${opened ? letterHTML(env) : `
+        <div class="veil">
+          <div class="hint">${ready ? "情绪退潮了。可以拆开看看。" : "一个被你封起来的决定"}</div>
+          <div class="countdown">${countdownText(env.openAt - Date.now())}</div>
+        </div>`}
+    `;
+    shelf.appendChild(el);
+
+    if (ready && !opened){
+      el.querySelector(".seal").addEventListener(
+        "click", () => openEnvelope(env, el), { once:true });
+    }
+    if (opened && !env.verdict) bindVerdict(env, el);
+  });
+}
+
+function letterHTML(env){
+  const pastLean = env.lean ? `当时倾向<span class="lean"> ${esc(env.lean)} </span>` : "当时没记下倾向";
+  const pastWhy  = env.why ? `,因为${esc(env.why)}` : "";
+  return `
+    <div class="letter">
+      <div class="stamp-date">${fmtDate(env.createdAt)} 的你写道</div>
+      <p class="q">${esc(env.q)}</p>
+      <div class="past">
+        <div class="tag">当时的心</div>
+        <div class="body">${pastLean}${pastWhy}。</div>
+      </div>
+      ${env.verdict ? `
+        <div class="verdict-done">
+          <div class="tag">退潮后的决定</div>
+          <div class="body">${esc(env.verdict)}</div>
+          <div class="vstamp">${fmtDate(env.verdictAt)} 落定</div>
+        </div>`
+      : `
+        <div class="verdict-ask">
+          <div class="prompt">情绪退潮了吗?现在的你,怎么看?</div>
+          <textarea class="vfield" placeholder="写下此刻、更冷静的你的决定……"></textarea>
+          <button class="save">落定</button>
+        </div>`}
+    </div>`;
+}
+
+async function openEnvelope(env, el){
+  let content;
+  try { content = await window.pywebview.api.open(env.id); }
+  catch(e){ return; }
+  if (!content || content.error) return;     // 时间没到等异常,蜡封不裂
+
+  Object.assign(env, content, { opened:true });
+  el.classList.add("cracking");
+  setTimeout(() => {
+    el.classList.remove("locked", "ready", "cracking");
+    el.classList.add("opened");
+    el.querySelector(".seal")?.remove();
+    el.querySelector(".veil")?.remove();
+    el.insertAdjacentHTML("beforeend", letterHTML(env));
+    bindVerdict(env, el);
+  }, 640);
+}
+
+function bindVerdict(env, el){
+  const save = el.querySelector(".save");
+  if (!save) return;
+  save.addEventListener("click", async () => {
+    const field = el.querySelector(".vfield");
+    const v = field.value.trim();
+    if (!v){ field.focus(); return; }
+    await window.pywebview.api.save_verdict(env.id, v);
+    refresh(true);
+  });
+}
+
+/* —— 每 15 秒就地更新倒计时;有信封刚到点时才整刷一次 —— */
+function tick(){
+  const t = Date.now();
+  let expired = false;
+  document.querySelectorAll(".env.locked").forEach(el => {
+    const env = byId(el.dataset.id); if (!env) return;
+    const rem = env.openAt - t;
+    if (rem <= 0) expired = true;
+    else { const cd = el.querySelector(".countdown"); if (cd) cd.textContent = countdownText(rem); }
+  });
+  if (expired) refresh(false);
+}
+
+/* —— 启动 —— */
+(async function init(){
+  await pywebviewReady();
+  await refresh(true);
+  setInterval(tick, 15000);
+})();
+</script>
+</body>
+</html>

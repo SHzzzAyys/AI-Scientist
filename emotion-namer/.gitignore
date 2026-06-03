@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+
+# PyInstaller 打包产物
+build/
+dist/
+
+# 但保留本项目的打包配置(仓库根 .gitignore 的 *.spec 会误伤它)
+!emotion_namer.spec
