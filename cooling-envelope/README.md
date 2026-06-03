@@ -58,12 +58,12 @@ pyinstaller cooling_envelope.spec
 几个要知道的:
 - **PyInstaller 不能跨平台编译**。要 mac 的 `.app` 就在 mac 上打,要 `.exe` 就在 Windows 上打,要 Linux 版就在 Linux 上打。
 - 配置用的是**单文件夹(onedir)**而非单文件——对 pywebview 更稳(尤其 Windows 的 WebView2 加载器)。
-- 想要图标:把 `.icns`(mac)/ `.ico`(Windows)路径填进 `cooling_envelope.spec` 里的 `icon=`。
+- 图标已内置在 `assets/`(`icon.icns` / `icon.ico`),spec 按平台自动选用;想换成自己的图,替换 `assets/` 下同名文件即可。
 - Apple Silicon 想要原生或通用包:把 spec 里的 `target_arch` 改成 `"arm64"` 或 `"universal2"`。
 - **如果运行时报某个后端模块缺失**(各平台偶发):在 spec 顶部那个 `for pkg in (...)` 里把对应包加进去再打。常见来源:macOS 的 `WebKit` / `Foundation`(pyobjc),Windows 的 `clr`(pythonnet)。
 - macOS 上别人下载你的 `.app` 可能被 Gatekeeper 拦。自己用:右键「打开」放行;要给别人用得做签名 + 公证(codesign / notarytool),可作为以后的步骤。
 
 ## 下一步(没做、留着)
 
-- 给 `.app` / `.exe` 配图标、做签名公证,让它对别人也是双击即开。
+- 给 `.app` / `.exe` 做**签名 + 公证**(codesign / notarytool;需 Apple 开发者账号),让别人下载后也是双击即开,不被 Gatekeeper 拦。(图标已内置,见 `assets/`。)
 - 这套外壳就是家族的脸:`情绪命名器` 等后续工具可以直接复用同一套 `web/` + `core/` 骨架。

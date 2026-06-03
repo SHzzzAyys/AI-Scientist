@@ -13,7 +13,7 @@
 几点须知(详见 README「打包成桌面应用」):
   - PyInstaller 不能跨平台编译:要哪个平台的包,就在哪个平台上打。
   - 用单文件夹(onedir)而非单文件 —— 对 pywebview 更稳(尤其 Windows 的 WebView2 加载器)。
-  - 想要图标:把 .icns(mac)/ .ico(Windows)路径填进下面的 icon=。
+  - 图标已内置在 assets/(icon.icns / icon.ico),下面按平台自动选用;想换成自己的图替换同名文件即可。
   - Apple Silicon 想要原生/通用包:把 target_arch 改成 "arm64" 或 "universal2"。
   - 运行时若报某后端模块缺失(各平台偶发):把对应包名加进下面的 for pkg in (...) 里再打。
 """
@@ -34,6 +34,14 @@ for pkg in ("WebKit", "Foundation", "objc", "clr"):
 
 # macOS 出 .app;Windows / Linux 出同名可执行文件夹
 APP_NAME = "冷静期信封" if sys.platform == "darwin" else "CoolingEnvelope"
+
+# 图标:Windows 用 .ico,macOS 用 .icns(Linux 上 PyInstaller 忽略图标)。
+# 想换成自己的图:替换 assets/ 下的 icon.icns / icon.ico 即可。
+ICON = None
+if sys.platform == "darwin":
+    ICON = "assets/icon.icns"
+elif sys.platform.startswith("win"):
+    ICON = "assets/icon.ico"
 
 a = Analysis(
     ["app.py"],
@@ -67,7 +75,7 @@ exe = EXE(
     target_arch=None,                # Apple Silicon:改 "arm64" / "universal2"
     codesign_identity=None,
     entitlements_file=None,
-    icon=None,                       # 配图标:填 .icns(mac)/ .ico(Windows)路径
+    icon=ICON,                       # Windows 取 assets/icon.ico
 )
 
 coll = COLLECT(
@@ -85,7 +93,7 @@ if sys.platform == "darwin":
     app = BUNDLE(
         coll,
         name="冷静期信封.app",
-        icon=None,                   # 同上:填 .icns 路径
+        icon="assets/icon.icns",     # macOS 应用图标
         bundle_identifier="com.zheng.cooling-envelope",
         info_plist={
             "CFBundleName": "冷静期信封",
